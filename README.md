@@ -27,7 +27,7 @@ This is the Express, Node, MongoDB backend of the project so we will focus on th
   * JSON Web Token
     * Standard for securely transmitting data between two parties
     * This is used to give access to specific functions for each user e.g Only display the delete button for posts/comments that the user did
-<br />
+
 ## Technologies
 
   * Node
