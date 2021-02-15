@@ -17,14 +17,16 @@ function generateToken(user) {
       email: user.email,
       username: user.username,
     },
+    // the key will keep user logged in/stay valid for 1h = 1 hour
     SECRET_KEY,
     { expiresIn: "1h" }
   );
 }
 
-// Takes first _/parent = last args, args = registerInput from typeDefs, info = data
+// Takes first _/parent = last args (not used), args = registerInput from typeDefs, info = data
 module.exports = {
   Mutation: {
+    // login function for user
     async login(_, { username, password }) {
       const { errors, valid } = validateLoginInput(username, password);
 
@@ -48,7 +50,7 @@ module.exports = {
         errors.general = "Wrong credentials";
         throw new UserInputError("Wrong credentials", { errors });
       }
-
+      // generates a secure token for user
       const token = generateToken(user);
 
       return {
@@ -57,11 +59,12 @@ module.exports = {
         token,
       };
     },
+    // register funtion for user
     async register(
       _,
       { registerInput: { username, email, password, confirmPassword } }
     ) {
-      // validate user data
+      // validate user data using validators
       const { valid, errors } = validateRegisterInput(
         username,
         email,
@@ -84,6 +87,7 @@ module.exports = {
       // Hash password and create auth token
       password = await bcrypt.hash(password, 12);
 
+      // creates the new user from user class/model
       const newUser = new User({
         email,
         username,

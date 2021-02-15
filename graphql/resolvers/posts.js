@@ -16,7 +16,7 @@ module.exports = {
         throw new Error(error);
       }
     },
-    // Gets post based on Id
+    // Gets post based on Id - not used - if I had a single post page
     async getPost(_, { postId }) {
       try {
         const post = await Post.findById(postId);
@@ -33,6 +33,7 @@ module.exports = {
   // This creates a new post in the database
   // Mutation used for writing to the database
   Mutation: {
+    // creates a post
     async createPost(_, { body }, context) {
       const user = checkAuth(context);
 
@@ -49,12 +50,14 @@ module.exports = {
 
       const post = await newPost.save();
 
+      // this would be used to tell user that x has posted a new post
       context.pubsub.publish('NEW_POST', {
         newPost: post
       });
 
       return post;
     },
+    // deletes a post
     async deletePost(_, { postId }, context) {
       const user = checkAuth(context);
 
@@ -78,10 +81,10 @@ module.exports = {
       const post = await Post.findById(postId);
       if (post) {
         if (post.likes.find((like) => like.username === username)) {
-          // Post already likes, unlike it
+          // if the post is already liked then unlike it
           post.likes = post.likes.filter((like) => like.username !== username);
         } else {
-          // Not liked, like post
+          // if the post is not liked then like the post
           post.likes.push({
             username,
             createdAt: new Date().toISOString()
@@ -90,9 +93,12 @@ module.exports = {
 
         await post.save();
         return post;
+
+        // if the post isn't found throw error
       } else throw new UserInputError('Post not found');
     },
   },
+  // subscribes to a new post - notification system
   Subscription: {
     newPost: {
       subscribe: (_, __, { pubsub }) => pubsub.asyncIterator('NEW_POST')

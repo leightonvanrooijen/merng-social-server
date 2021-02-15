@@ -1,5 +1,6 @@
 const { model, Schema } = require("mongoose");
 
+// schema and types for posts
 const postSchema = new Schema({
   body: String,
   username: String,

@@ -1,6 +1,7 @@
 const { gql } = require("apollo-server");
 
-// Specify the type that must be returned from the query (each field doesn't have to be querried)
+// Specify the type that must be returned from the query
+// each field doesn't have to be querried
 module.exports = gql`
   type Post {
     id: ID!
